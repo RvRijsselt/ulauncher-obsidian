@@ -239,22 +239,23 @@ def find_string_in_vault(vault: str, search: str) -> List[Note]:
 
     CONTEXT_SIZE = 10
 
-    search = search.lower()
-    for file in files:
-        if os.path.isfile(file) and search is not None:
-            with open(file, "r") as f:
-                for line in f:
-                    left, sep, right = line.lower().partition(search)
-                    if sep:
-                        context = left[CONTEXT_SIZE:] + sep + right[:CONTEXT_SIZE]
-                        suggestions.append(
-                            Note(
-                                name=get_name_from_path(file),
-                                path=file,
-                                description=context,
+    if search is not None:
+        search = search.lower()
+        for file in files:
+            if os.path.isfile(file):
+                with open(file, "r") as f:
+                    for line in f:
+                        left, sep, right = line.lower().partition(search)
+                        if sep:
+                            context = left[CONTEXT_SIZE:] + sep + right[:CONTEXT_SIZE]
+                            suggestions.append(
+                                Note(
+                                    name=get_name_from_path(file),
+                                    path=file,
+                                    description=context,
+                                )
                             )
-                        )
-                        break
+                            break
 
     return suggestions
 
